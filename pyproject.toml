@@ -1,0 +1,16 @@
+[project]
+name = "sqlite-manager"
+version = "0.1.0"
+description = "FastAPI SQLite Database Manager"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "jinja2>=3.1.3",
+    "python-multipart>=0.0.9",
+    "pydantic>=2.6.0",
+]
+
+[tool.uv]
+package = false

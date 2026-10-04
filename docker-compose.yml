@@ -1,0 +1,24 @@
+services:
+  sqlite-manager:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: python-sql:latest #build this upfront
+    container_name: sql.myapps.local
+    hostname: sql.myapps.localhost
+    ports:
+      - "4012:4012"
+    environment:
+      - ROUTE_PATH="sql"
+      - DATA_DIR=/app/data
+      - CURRENT_DIR=/app/current
+    volumes:
+      # Mount application code for live reloading during development
+      - ./app:/app/app
+      # Mount data directory containing subfolders & symlinked SQLite files
+      - ./data:/app/data
+      # Mount current directory to persist active database copies
+      - ./current:/app/current
+    # Enables uvicorn hot-reload when mounted files inside app/ change
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 4012 --reload
+    restart: unless-stopped

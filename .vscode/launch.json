@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Uvicorn App",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--port", "4012",
+                "--host", "0.0.0.0"
+            ],
+            "env": {
+                "ROUTE_PATH": "sql"
+            },
+            "jinja": true,
+            "justMyCode": true
+        }
+    ]
+    }

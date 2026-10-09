@@ -101,6 +101,7 @@ def scan_databases() -> List[Dict[str, Any]]:
             resolved_target = None
 
             for file in entry.iterdir():
+                # Accept file if it has a DB extension or is a symlink
                 if file.suffix.lower() in valid_extensions or file.is_symlink():
                     try:
                         resolved = file.resolve()
@@ -108,7 +109,8 @@ def scan_databases() -> List[Dict[str, Any]]:
                             db_file_found = file.name
                             resolved_target = str(resolved)
                             break
-                    except Exception:
+                    except Exception as e:
+                        print(f"Error resolving {file}: {e}")
                         continue
 
             databases.append({
@@ -118,8 +120,8 @@ def scan_databases() -> List[Dict[str, Any]]:
                 "resolved_path": resolved_target or ""
             })
 
+    print("DEBUG scan_databases output:", databases)
     return databases
-
 
 def get_active_info() -> Optional[str]:
     """Retrieves the name of the currently loaded subfolder."""
@@ -307,13 +309,14 @@ async def load_database(payload: LoadDBRequest):
     )
     tables = [row["name"] for row in tables_result.get("rows", [])]
 
-    return {
+    ret =  {
         "status": "success",
         "message": f"Successfully loaded database from subfolder '{payload.folder}'.",
         "active_db": payload.folder,
         "tables": tables
     }
-
+    print(ret)
+    return ret
 
 @app.post("/api/commit")
 async def commit_database():

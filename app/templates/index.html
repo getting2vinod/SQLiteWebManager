@@ -32,70 +32,55 @@
 </head>
 <body>
 
-    <!-- Main Header / Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 border-bottom border-secondary shadow-sm">
-        <div class="container-fluid gap-2">
-            <!-- Brand -->
-            <a class="navbar-brand fw-bold d-flex align-items-center me-2" href="#">
-                <i class="bi bi-database-fill me-2 text-primary"></i>
-                <span>SQLite Manager</span>
-            </a>
-
-            <!-- Inline DB Selection & Quick Load Controls -->
-            <div class="d-flex align-items-center me-auto" style="max-width: 450px; width: 100%;">
-                <select id="dbSelect" class="form-select form-select-sm me-2 bg-dark text-light border-secondary">
-                    <option value="">Select Database...</option>
-                </select>
-                <button id="btnLoad" class="btn btn-primary btn-sm d-flex align-items-center text-nowrap me-1">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> Load
-                </button>
-                <button id="btnRefresh" class="btn btn-outline-secondary btn-sm text-nowrap" title="Refresh List">
-                    <i class="bi bi-arrow-clockwise"></i>
-                </button>
-            </div>
-
-            <!-- Active Status Badge + Commit & Manage Dropdown -->
-            <div class="d-flex align-items-center gap-2">
-                <!-- Active DB Badge -->
-                <span id="activeBadge" class="badge bg-success-subtle text-success border border-success py-2 px-3 font-monospace">
+    <!-- Main Header / Navigation Bar (Flat Button Layout) -->
+    <nav class="navbar navbar-dark bg-dark px-3 border-bottom border-secondary shadow-sm">
+        <div class="container-fluid d-flex flex-wrap align-items-center justify-content-between gap-2">
+            
+            <!-- Brand & Active DB Badge -->
+            <div class="d-flex align-items-center gap-3">
+                <a class="navbar-brand fw-bold d-flex align-items-center m-0" href="#">
+                    <i class="bi bi-database-fill me-2 text-primary"></i>
+                    <span>SQLite Manager</span>
+                </a>
+                <span id="activeBadge" class="badge bg-success-subtle text-success border border-success py-1 px-2 font-monospace">
                     Active: None
                 </span>
+            </div>
 
-                <!-- Primary Action: Commit Working Copy -->
+            <!-- Database Selection & Action Buttons -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <select id="dbSelect" class="form-select form-select-sm bg-dark text-light border-secondary" style="min-width: 200px;">
+                    <option value="">Select Database...</option>
+                </select>
+
+                <button id="btnLoad" class="btn btn-primary btn-sm d-flex align-items-center">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Load
+                </button>
+
+                <button id="btnRefresh" class="btn btn-outline-secondary btn-sm" title="Refresh List">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+
+                <div class="vr bg-secondary mx-1"></div>
+
+                <!-- Direct Action Buttons (No Dropdown Dependency) -->
                 <button id="btnCommit" class="btn btn-warning btn-sm fw-semibold d-flex align-items-center" disabled>
                     <i class="bi bi-upload me-1"></i> Commit
                 </button>
 
-                <!-- Secondary Actions Dropdown Menu -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" 
-                            type="button" 
-                            id="dbManageDropdown" 
-                            data-bs-toggle="dropdown" 
-                            data-bs-display="static" 
-                            aria-expanded="false">
-                        <i class="bi bi-gear-fill me-1"></i> Manage
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-secondary mt-1" aria-labelledby="dbManageDropdown" style="z-index: 1050;">
-                        <li>
-                            <button id="btnNewDbModal" class="dropdown-item d-flex align-items-center py-2" data-bs-toggle="modal" data-bs-target="#newDbModal">
-                                <i class="bi bi-plus-circle me-2 text-success fs-6"></i> New Database...
-                            </button>
-                        </li>
-                        <li>
-                            <button id="btnDownload" class="dropdown-item d-flex align-items-center py-2" disabled>
-                                <i class="bi bi-download me-2 text-info fs-6"></i> Download Working Copy
-                            </button>
-                        </li>
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li>
-                            <button id="btnDelete" class="dropdown-item d-flex align-items-center py-2 text-danger" disabled>
-                                <i class="bi bi-trash me-2 fs-6"></i> Delete Database
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                <button type="button" class="btn btn-outline-success btn-sm d-flex align-items-center" onclick="showModal('newDbModal')">
+                    <i class="bi bi-plus-circle me-1"></i> New
+                </button>
+
+                <button id="btnDownload" class="btn btn-outline-info btn-sm d-flex align-items-center" disabled>
+                    <i class="bi bi-download me-1"></i> Download
+                </button>
+
+                <button id="btnDelete" class="btn btn-outline-danger btn-sm d-flex align-items-center" disabled>
+                    <i class="bi bi-trash me-1"></i> Delete
+                </button>
             </div>
+
         </div>
     </nav>
 
@@ -127,23 +112,23 @@
                 <!-- Query Section -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-body-tertiary p-0 border-bottom">
-                        <ul class="nav nav-tabs card-header-tabs m-0 px-3 pt-2" id="queryTabs" role="tablist">
+                        <ul class="nav nav-tabs card-header-tabs m-0 px-3 pt-2">
                             <li class="nav-item">
-                                <button class="nav-link active py-2" id="editor-tab" data-bs-toggle="tab" data-bs-target="#editorPane" type="button">
+                                <button type="button" class="nav-link active py-2" onclick="switchTab('editorPane', 'queryTabContent', this)">
                                     <i class="bi bi-code-square me-1 text-primary"></i> Query Editor
                                 </button>
                             </li>
                             <li class="nav-item">
-                                <button class="nav-link py-2" id="history-tab" data-bs-toggle="tab" data-bs-target="#historyPane" type="button">
+                                <button type="button" class="nav-link py-2" onclick="switchTab('historyPane', 'queryTabContent', this)">
                                     <i class="bi bi-clock-history me-1"></i> Query History <span id="historyCount" class="badge bg-secondary rounded-pill ms-1">0</span>
                                 </button>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body p-3">
-                        <div class="tab-content">
+                        <div id="queryTabContent">
                             <!-- Editor Tab -->
-                            <div class="tab-pane fade show active" id="editorPane">
+                            <div id="editorPane">
                                 <div class="mb-2">
                                     <textarea id="sqlEditor" class="form-control sql-editor p-3" rows="4" placeholder="Type custom SQL query here... (e.g., SELECT * FROM table_name LIMIT 25;)"></textarea>
                                 </div>
@@ -155,7 +140,7 @@
                                 </div>
                             </div>
                             <!-- History Tab -->
-                            <div class="tab-pane fade" id="historyPane">
+                            <div id="historyPane" class="d-none">
                                 <div id="historyList" class="list-group list-group-flush" style="max-height: 200px; overflow-y: auto;">
                                     <div class="text-muted text-center py-3 small">No query history yet</div>
                                 </div>
@@ -167,20 +152,20 @@
                 <!-- Results & Schema Section -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-2 px-3">
-                        <ul class="nav nav-tabs card-header-tabs m-0" id="resultTabs">
+                        <ul class="nav nav-tabs card-header-tabs m-0">
                             <li class="nav-item">
-                                <button class="nav-link active py-1 px-3 fs-6" id="data-tab" data-bs-toggle="tab" data-bs-target="#dataPane">Data View</button>
+                                <button type="button" class="nav-link active py-1 px-3 fs-6" onclick="switchTab('dataPane', 'resultTabContent', this)">Data View</button>
                             </li>
                             <li class="nav-item">
-                                <button class="nav-link py-1 px-3 fs-6" id="schema-tab" data-bs-toggle="tab" data-bs-target="#schemaPane">Schema View</button>
+                                <button type="button" class="nav-link py-1 px-3 fs-6" onclick="switchTab('schemaPane', 'resultTabContent', this)">Schema View</button>
                             </li>
                         </ul>
                         <div id="queryStats" class="text-muted small font-monospace">Rows: 0 | Execution time: 0 ms</div>
                     </div>
                     <div class="card-body p-3">
-                        <div class="tab-content">
+                        <div id="resultTabContent">
                             <!-- Data View -->
-                            <div class="tab-pane fade show active" id="dataPane">
+                            <div id="dataPane">
                                 <div class="table-responsive" style="min-height: 250px;" id="dataContainer">
                                     <div class="text-muted text-center py-5">Select a table or execute a query to display results</div>
                                 </div>
@@ -199,7 +184,7 @@
                                 </div>
                             </div>
                             <!-- Schema View -->
-                            <div class="tab-pane fade" id="schemaPane">
+                            <div id="schemaPane" class="d-none">
                                 <div class="table-responsive" id="schemaContainer">
                                     <div class="text-muted text-center py-5">Select a table to view schema definition</div>
                                 </div>
@@ -213,12 +198,12 @@
     </div>
 
     <!-- New Database Modal -->
-    <div class="modal fade" id="newDbModal" tabindex="-1" aria-labelledby="newDbModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newDbModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newDbModalLabel"><i class="bi bi-plus-circle text-success me-2"></i>Create New Database</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-success me-2"></i>Create New Database</h5>
+                    <button type="button" class="btn-close" onclick="hideModal('newDbModal')"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -228,15 +213,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('newDbModal')">Cancel</button>
                     <button type="button" id="btnCreateDb" class="btn btn-success">Create & Load</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/bootstrap.bundle.min.js"></script>
 
     <!-- Application Script -->
     <script>
@@ -253,6 +235,43 @@
             }
             return `/${cleanPath}`;
         };
+
+        // Pure Vanilla JS Tab Switcher (No Bootstrap JS dependency)
+        function switchTab(activePaneId, containerId, btnElement) {
+            const nav = btnElement.closest('.nav');
+            if (nav) {
+                nav.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+            }
+            btnElement.classList.add('active');
+
+            const container = document.getElementById(containerId);
+            if (container) {
+                Array.from(container.children).forEach(pane => {
+                    if (pane.id === activePaneId) {
+                        pane.classList.remove('d-none');
+                    } else {
+                        pane.classList.add('d-none');
+                    }
+                });
+            }
+        }
+
+        // Pure Vanilla JS Modal Toggle Helpers
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show', 'd-block');
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            }
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show', 'd-block');
+                modal.style.backgroundColor = '';
+            }
+        }
 
         // Application State
         let currentActiveFolder = null;
@@ -290,7 +309,7 @@
             alertContainer.innerHTML = `
                 <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert">
                     <span>${message}</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" onclick="hideAlert()"></button>
                 </div>
             `;
         }
@@ -397,7 +416,7 @@
             window.location.href = getUrl('/api/download');
         }
 
-        // Delete Database (Aligned with POST /api/delete-db)
+        // Delete Database
         async function deleteDatabase() {
             const folder = dbSelect.value;
             if (!folder) return;
@@ -421,7 +440,7 @@
             }
         }
 
-        // Create New Database (Aligned with POST /api/create-db)
+        // Create New Database
         async function createNewDatabase() {
             const db_name = document.getElementById('newDbName').value.trim();
 
@@ -439,9 +458,8 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || 'Failed to create database.');
 
-                const modalEl = document.getElementById('newDbModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
+                hideModal('newDbModal');
+                document.getElementById('newDbName').value = '';
 
                 showAlert(data.message, 'success');
                 await fetchDatabases();
@@ -495,7 +513,7 @@
             }
         }
 
-        // Load Table Data & Schema (Aligned with GET /api/table/{table_name})
+        // Load Table Data & Schema
         async function loadTableData(tableName, page = 1) {
             currentPage = page;
             currentSelectedTable = tableName;
@@ -506,17 +524,11 @@
 
                 if (!res.ok) throw new Error(data.detail || 'Error loading table details.');
 
-                // Execution time and stats
                 const elapsed = data.data?.elapsed_ms || 0;
                 queryStats.textContent = `Rows: ${data.pagination.total_rows} | Execution time: ${elapsed} ms`;
 
-                // Render Data Table
                 renderDataTable(data.data.columns, data.data.rows);
-
-                // Render Schema View
                 renderSchemaTable(data.columns);
-
-                // Render Pagination
                 renderPagination(data.pagination.total_rows, page, pageSize);
             } catch (err) {
                 dataContainer.innerHTML = `<div class="alert alert-danger m-3">${err.message}</div>`;
@@ -622,7 +634,7 @@
             paginationList.appendChild(nextLi);
         }
 
-        // Run Custom SQL Query (Aligned with POST /api/query)
+        // Run Custom SQL Query
         async function runQuery() {
             const query = sqlEditor.value.trim();
             if (!query) return;
@@ -649,7 +661,7 @@
                 } else {
                     dataContainer.innerHTML = `<div class="alert alert-success m-3"><i class="bi bi-check-circle me-2"></i>${data.message}</div>`;
                     paginationNav.classList.add('d-none');
-                    fetchTables(); // Refresh sidebar in case query modified database structure
+                    fetchTables();
                 }
 
                 saveQueryHistory(query);
@@ -685,20 +697,15 @@
                 item.textContent = q;
                 item.onclick = () => {
                     sqlEditor.value = q;
-                    const editorTab = new bootstrap.Tab(document.getElementById('editor-tab'));
-                    editorTab.show();
+                    const editorTabBtn = document.querySelector("button[onclick*='editorPane']");
+                    if (editorTabBtn) switchTab('editorPane', 'queryTabContent', editorTabBtn);
                 };
                 historyList.appendChild(item);
             });
         }
 
+        // Event Listeners Initialization
         document.addEventListener('DOMContentLoaded', () => {
-            // Explicitly initialize Bootstrap Dropdown menu
-            const dropdownEl = document.getElementById('dbManageDropdown');
-            if (dropdownEl && typeof bootstrap !== 'undefined') {
-                new bootstrap.Dropdown(dropdownEl);
-            }
-
             fetchDatabases();
             renderHistory();
 
